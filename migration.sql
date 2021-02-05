@@ -1,4 +1,95 @@
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS
+    `magento_acknowledged_bulk`,
+    `magento_banner`,
+    `magento_banner_catalogrule`,
+    `magento_banner_content`,
+    `magento_banner_customersegment`,
+    `magento_banner_salesrule`,
+    `magento_bulk`,
+    `magento_catalogevent_event`,
+    `magento_catalogevent_event_image`,
+    `magento_catalogpermissions`,
+    `magento_catalogpermissions_index`,
+    `magento_catalogpermissions_index_product`,
+    `magento_catalogpermissions_index_product_replica`,
+    `magento_catalogpermissions_index_product_tmp`,
+    `magento_catalogpermissions_index_replica`,
+    `magento_catalogpermissions_index_tmp`,
+    `magento_customerbalance`,
+    `magento_customerbalance_history`,
+    `magento_customercustomattributes_sales_flat_order`,
+    `magento_customercustomattributes_sales_flat_order_address`,
+    `magento_customercustomattributes_sales_flat_quote`,
+    `magento_customercustomattributes_sales_flat_quote_address`,
+    `magento_customersegment_customer`,
+    `magento_customersegment_event`,
+    `magento_customersegment_segment`,
+    `magento_customersegment_website`,
+    `magento_giftcard_amount`,
+    `magento_giftcardaccount`,
+    `magento_giftcardaccount_history`,
+    `magento_giftcardaccount_pool`,
+    `magento_giftregistry_data`,
+    `magento_giftregistry_entity`,
+    `magento_giftregistry_item`,
+    `magento_giftregistry_item_option`,
+    `magento_giftregistry_label`,
+    `magento_giftregistry_person`,
+    `magento_giftregistry_type`,
+    `magento_giftregistry_type_info`,
+    `magento_giftwrapping`,
+    `magento_giftwrapping_store_attributes`,
+    `magento_giftwrapping_website`,
+    `magento_invitation`,
+    `magento_invitation_status_history`,
+    `magento_invitation_track`,
+    `magento_logging_event`,
+    `magento_logging_event_changes`,
+    `magento_operation`,
+    `magento_reminder_rule`,
+    `magento_reminder_rule_coupon`,
+    `magento_reminder_rule_log`,
+    `magento_reminder_rule_website`,
+    `magento_reminder_template`,
+    `magento_reward`,
+    `magento_reward_history`,
+    `magento_reward_rate`,
+    `magento_reward_salesrule`,
+    `magento_rma`,
+    `magento_rma_grid`,
+    `magento_rma_item_eav_attribute`,
+    `magento_rma_item_eav_attribute_website`,
+    `magento_rma_item_entity`,
+    `magento_rma_item_entity_datetime`,
+    `magento_rma_item_entity_decimal`,
+    `magento_rma_item_entity_int`,
+    `magento_rma_item_entity_text`,
+    `magento_rma_item_entity_varchar`,
+    `magento_rma_item_form_attribute`,
+    `magento_rma_shipping_label`,
+    `magento_rma_status_history`,
+    `magento_sales_creditmemo_grid_archive`,
+    `magento_sales_invoice_grid_archive`,
+    `magento_sales_order_grid_archive`,
+    `magento_sales_shipment_grid_archive`,
+    `magento_salesrule_filter`,
+    `magento_scheduled_operations`,
+    `magento_targetrule`,
+    `magento_targetrule_customersegment`,
+    `magento_targetrule_index`,
+    `magento_targetrule_index_crosssell`,
+    `magento_targetrule_index_crosssell_product`,
+    `magento_targetrule_index_related`,
+    `magento_targetrule_index_related_product`,
+    `magento_targetrule_index_upsell`,
+    `magento_targetrule_index_upsell_product`,
+    `magento_targetrule_product`,
+    `magento_versionscms_hierarchy_lock`,
+    `magento_versionscms_hierarchy_metadata`,
+    `magento_versionscms_hierarchy_node`,
+    `magento_versionscms_increment`,
+    `visual_merchandiser_rule`;
 
 -- CMS
 
@@ -151,6 +242,8 @@ ALTER TABLE wfh_downgrade.catalog_product_entity DROP PRIMARY KEY;
 ALTER TABLE wfh_downgrade.catalog_product_entity ADD CONSTRAINT `PRIMARY` PRIMARY KEY (entity_id);
 ALTER TABLE wfh_downgrade.catalog_product_entity DROP COLUMN row_id;
 
+DROP TABLE IF EXISTS `sequence_product_bundle_selection`,`sequence_product_bundle_option`,`sequence_product`;
+
 -- CATEGORY
 
 ALTER TABLE `catalog_category_entity_datetime`
@@ -195,17 +288,7 @@ ALTER TABLE wfh_downgrade.catalog_category_entity DROP PRIMARY KEY;
 ALTER TABLE wfh_downgrade.catalog_category_entity ADD CONSTRAINT `PRIMARY` PRIMARY KEY (entity_id);
 ALTER TABLE wfh_downgrade.catalog_category_entity DROP COLUMN row_id;
 
--- CART RULE
-
-DROP TABLE IF EXISTS
-    `magento_banner_salesrule`,
-    `magento_reward_salesrule`,
-    `magento_salesrule_filter`,
-    `magento_reminder_rule_coupon`,
-    `magento_reminder_rule_website`,
-    `magento_reminder_template`,
-    `magento_reminder_rule_log`,
-    `magento_reminder_rule`;
+-- SALES RULE
 
 ALTER TABLE `salesrule_customer_group`
 CHANGE `row_id` `rule_id` int(10) unsigned NOT NULL COMMENT 'Rule Id',
@@ -242,14 +325,106 @@ ALTER TABLE wfh_downgrade.salesrule ADD CONSTRAINT `PRIMARY` PRIMARY KEY (rule_i
 ALTER TABLE wfh_downgrade.salesrule DROP COLUMN row_id;
 
 
+-- CATALOG RULE
 
-SELECT 
-  TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
-FROM
-  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-WHERE
-  REFERENCED_TABLE_SCHEMA = 'wfh_downgrade' AND
-  REFERENCED_TABLE_NAME = 'salesrule' AND
-  REFERENCED_COLUMN_NAME = 'row_id';
+ALTER TABLE `catalogrule_customer_group`
+CHANGE `row_id` `rule_id` int(10) unsigned NOT NULL COMMENT 'Rule Id',
+DROP FOREIGN KEY `CATALOGRULE_CUSTOMER_GROUP_ROW_ID_CATALOGRULE_ROW_ID`,
+ADD CONSTRAINT `CATALOGRULE_CUSTOMER_GROUP_RULE_ID_CATALOGRULE_RULE_ID` FOREIGN KEY (`rule_id`) REFERENCES `catalogrule` (`rule_id`) ON DELETE CASCADE;
+
+ALTER TABLE `catalogrule_website`
+CHANGE `row_id` `rule_id` int(10) unsigned NOT NULL COMMENT 'Rule Id',
+DROP FOREIGN KEY `CATALOGRULE_WEBSITE_ROW_ID_CATALOGRULE_ROW_ID`,
+ADD CONSTRAINT `CATALOGRULE_WEBSITE_RULE_ID_CATALOGRULE_RULE_ID` FOREIGN KEY (`rule_id`) REFERENCES `catalogrule` (`rule_id`) ON DELETE CASCADE;
+
+ALTER TABLE wfh_downgrade.catalogrule DROP FOREIGN KEY CATALOGRULE_RULE_ID_SEQUENCE_CATALOGRULE_SEQUENCE_VALUE;
+ALTER TABLE wfh_downgrade.catalogrule MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
+ALTER TABLE wfh_downgrade.catalogrule MODIFY COLUMN rule_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
+ALTER TABLE wfh_downgrade.catalogrule DROP PRIMARY KEY;
+ALTER TABLE wfh_downgrade.catalogrule ADD CONSTRAINT `PRIMARY` PRIMARY KEY (rule_id);
+ALTER TABLE wfh_downgrade.catalogrule DROP COLUMN row_id;
+
+
+ALTER TABLE catalog_category_product DROP FOREIGN KEY `CAT_CTGR_PRD_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE catalog_category_product DROP FOREIGN KEY `CAT_CTGR_PRD_CTGR_ID_SEQUENCE_CAT_CTGR_SEQUENCE_VAL`;
+ALTER TABLE catalog_compare_item DROP FOREIGN KEY `CATALOG_COMPARE_ITEM_PRODUCT_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE`;
+ALTER TABLE catalog_product_index_tier_price DROP FOREIGN KEY `CAT_PRD_IDX_TIER_PRICE_ENTT_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE catalog_product_website DROP FOREIGN KEY `CAT_PRD_WS_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE catalog_url_rewrite_product_category DROP FOREIGN KEY `CAT_URL_REWRITE_PRD_CTGR_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE cataloginventory_stock_item DROP FOREIGN KEY `CATINV_STOCK_ITEM_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE email_catalog DROP FOREIGN KEY `EMAIL_CATALOG_PRODUCT_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE`;
+ALTER TABLE product_alert_price DROP FOREIGN KEY `PRODUCT_ALERT_PRICE_PRODUCT_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE`;
+ALTER TABLE catalog_product_bundle_price_index DROP FOREIGN KEY `CAT_PRD_BNDL_PRICE_IDX_ENTT_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE product_alert_stock DROP FOREIGN KEY `PRODUCT_ALERT_STOCK_PRODUCT_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE`;
+ALTER TABLE report_compared_product_index DROP FOREIGN KEY `REPORT_CMPD_PRD_IDX_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE report_viewed_product_aggregated_daily DROP FOREIGN KEY `REPORT_VIEWED_PRD_AGGRED_DAILY_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE report_viewed_product_aggregated_monthly DROP FOREIGN KEY `FK_0140003A30AFC1A9188D723C4634BA5D`;
+ALTER TABLE report_viewed_product_aggregated_yearly DROP FOREIGN KEY `REPORT_VIEWED_PRD_AGGRED_YEARLY_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE report_viewed_product_index DROP FOREIGN KEY `REPORT_VIEWED_PRD_IDX_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
+ALTER TABLE weee_tax DROP FOREIGN KEY `WEEE_TAX_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE`;
+ALTER TABLE wishlist_item DROP FOREIGN KEY `WISHLIST_ITEM_PRODUCT_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE`;
+
+DELETE
+FROM `eav_entity_type`
+WHERE `entity_type_code` IN ('rma_item','cms_page','cms_block');
+
+DELETE
+FROM `eav_attribute`
+WHERE `attribute_code` IN (
+                           'reward_update_notification',
+                           'reward_warning_notification',
+                           'automatic_sorting',
+                           'allow_message',
+                           'allow_open_amount',
+                           'email_template',
+                           'giftcard_amounts',
+                           'giftcard_type',
+                           'gift_wrapping_available',
+                           'gift_wrapping_price',
+                           'is_redeemable',
+                           'is_returnable',
+                           'lifetime',
+                           'open_amount_max',
+                           'open_amount_min',
+                           'related_tgtr_position_behavior',
+                           'related_tgtr_position_limit',
+                           'upsell_tgtr_position_behavior',
+                           'upsell_tgtr_position_limit',
+                           'use_config_allow_message',
+                           'use_config_email_template',
+                           'use_config_is_redeemable',
+                           'use_config_lifetime',
+                           'reward_points_balance_refunded',
+                           'reward_salesrule_points',
+                           'condition',
+                           'is_qty_decimal',
+                           'order_item_id',
+                           'product_admin_name',
+                           'product_admin_sku',
+                           'product_name',
+                           'product_options',
+                           'product_sku',
+                           'qty_approved',
+                           'qty_authorized',
+                           'qty_requested',
+                           'qty_returned',
+                           'reason',
+                           'reason_other',
+                           'resolution',
+                           'rma_entity_id',
+                           
+    );
+   
+alter table wishlist rename index WISHLIST_CUSTOMER_ID to WISHLIST_CUSTOMER_ID_DELETE_ME;
+
+
+DELETE from core_config_data ccd where path like '%carriers/loyalty%';
+
+DELETE FROM `eav_attribute` WHERE `attribute_code` IN (
+   'sale_id',
+   'cogs_id',
+   'tracking_category');
+  
+ 
  
  
