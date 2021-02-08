@@ -424,7 +424,3 @@ DELETE FROM `eav_attribute` WHERE `attribute_code` IN (
    'sale_id',
    'cogs_id',
    'tracking_category');
-  
- 
- 
- 
