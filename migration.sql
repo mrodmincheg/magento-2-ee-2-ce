@@ -100,11 +100,13 @@ ADD PRIMARY KEY (`block_id`,`store_id`),
 DROP FOREIGN KEY `CMS_BLOCK_STORE_ROW_ID_CMS_BLOCK_ROW_ID`,
 ADD CONSTRAINT `CMS_BLOCK_STORE_BLOCK_ID_CMS_BLOCK_BLOCK_ID` FOREIGN KEY (`block_id`) REFERENCES `cms_block` (`block_id`) ON DELETE CASCADE;
 
-ALTER TABLE wfh_downgrade.cms_block DROP FOREIGN KEY CMS_BLOCK_BLOCK_ID_SEQUENCE_CMS_BLOCK_SEQUENCE_VALUE;
-ALTER TABLE wfh_downgrade.cms_block MODIFY COLUMN row_id smallint NOT NULL COMMENT 'Version Id';
-ALTER TABLE wfh_downgrade.cms_block MODIFY COLUMN block_id smallint auto_increment NOT NULL COMMENT 'Entity Id';
-ALTER TABLE wfh_downgrade.cms_block DROP PRIMARY KEY;
-ALTER TABLE wfh_downgrade.cms_block ADD CONSTRAINT `PRIMARY` PRIMARY KEY (block_id);
+UPDATE cms_block set block_id = row_id ;
+ALTER TABLE cms_block DROP FOREIGN KEY CMS_BLOCK_BLOCK_ID_SEQUENCE_CMS_BLOCK_SEQUENCE_VALUE;
+ALTER TABLE cms_block MODIFY COLUMN row_id smallint COMMENT 'Version Id';
+ALTER TABLE cms_block MODIFY COLUMN block_id smallint auto_increment NOT NULL COMMENT 'Entity Id';
+ALTER TABLE cms_block DROP PRIMARY KEY;
+ALTER TABLE cms_block ADD CONSTRAINT `PRIMARY_KEY` PRIMARY KEY (block_id);
+ALTER TABLE cms_block DROP COLUMN row_id;
 
 ALTER TABLE `cms_page_store`
 CHANGE `row_id` `page_id`  smallint(6) NOT NULL COMMENT 'Page ID',
@@ -113,11 +115,13 @@ ADD PRIMARY KEY (`page_id`,`store_id`),
 DROP FOREIGN KEY `CMS_PAGE_STORE_ROW_ID_CMS_PAGE_ROW_ID`,
 ADD CONSTRAINT `CMS_PAGE_STORE_PAGE_ID_CMS_PAGE_PAGE_ID` FOREIGN KEY (`page_id`) REFERENCES `cms_page` (`page_id`) ON DELETE CASCADE;
 
-ALTER TABLE wfh_downgrade.cms_page DROP FOREIGN KEY CMS_PAGE_PAGE_ID_SEQUENCE_CMS_PAGE_SEQUENCE_VALUE;
-ALTER TABLE wfh_downgrade.cms_page MODIFY COLUMN row_id smallint NOT NULL COMMENT 'Version Id';
-ALTER TABLE wfh_downgrade.cms_page MODIFY COLUMN page_id smallint auto_increment NOT NULL COMMENT 'Entity Id';
-ALTER TABLE wfh_downgrade.cms_page DROP PRIMARY KEY;
-ALTER TABLE wfh_downgrade.cms_page ADD CONSTRAINT `PRIMARY` PRIMARY KEY (page_id);
+UPDATE cms_page set block_id = row_id ;
+ALTER TABLE cms_page DROP FOREIGN KEY CMS_PAGE_PAGE_ID_SEQUENCE_CMS_PAGE_SEQUENCE_VALUE;
+ALTER TABLE cms_page MODIFY COLUMN row_id smallint NOT NULL COMMENT 'Version Id';
+ALTER TABLE cms_page MODIFY COLUMN page_id smallint auto_increment NOT NULL COMMENT 'Entity Id';
+ALTER TABLE cms_page DROP PRIMARY KEY;
+ALTER TABLE cms_page ADD CONSTRAINT `PRIMARY_KEY` PRIMARY KEY (page_id);
+ALTER TABLE cms_page DROP COLUMN row_id;
 
 -- PRODUCT
 
@@ -196,7 +200,6 @@ ADD CONSTRAINT `CAT_PRD_ENTT_MDA_GLR_VAL_TO_ENTT_ENTT_ID_CAT_PRD_ENTT_ENTT_ID` F
 ALTER TABLE `catalog_product_entity_tier_price`
 CHANGE `row_id` `entity_id` int(10) unsigned NOT NULL COMMENT 'Entity Id',
 DROP FOREIGN KEY `CAT_PRD_ENTT_TIER_PRICE_ROW_ID_CAT_PRD_ENTT_ROW_ID`,
-DROP FOREIGN KEY `CAT_PRD_IDX_TIER_PRICE_ENTT_ID_SEQUENCE_PRD_SEQUENCE_VAL`,
 ADD CONSTRAINT `CAT_PRD_ENTT_TIER_PRICE_ENTT_ID_CAT_PRD_ENTT_ENTT_ID` FOREIGN KEY (`entity_id`) REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE;
 
 ALTER TABLE `catalog_product_link`
@@ -235,12 +238,13 @@ ALTER TABLE `downloadable_sample`
 DROP FOREIGN KEY `DOWNLOADABLE_SAMPLE_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ROW_ID`,
 ADD CONSTRAINT `DOWNLOADABLE_SAMPLE_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID` FOREIGN KEY (`product_id`) REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE;
 
-ALTER TABLE wfh_downgrade.catalog_product_entity DROP FOREIGN KEY CATALOG_PRODUCT_ENTITY_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE;
-ALTER TABLE wfh_downgrade.catalog_product_entity MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
-ALTER TABLE wfh_downgrade.catalog_product_entity MODIFY COLUMN entity_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
-ALTER TABLE wfh_downgrade.catalog_product_entity DROP PRIMARY KEY;
-ALTER TABLE wfh_downgrade.catalog_product_entity ADD CONSTRAINT `PRIMARY` PRIMARY KEY (entity_id);
-ALTER TABLE wfh_downgrade.catalog_product_entity DROP COLUMN row_id;
+UPDATE catalog_product_entity set entity_id = row_id ;
+ALTER TABLE catalog_product_entity DROP FOREIGN KEY CATALOG_PRODUCT_ENTITY_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE;
+ALTER TABLE catalog_product_entity MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
+ALTER TABLE catalog_product_entity MODIFY COLUMN entity_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
+ALTER TABLE catalog_product_entity DROP PRIMARY KEY;
+ALTER TABLE catalog_product_entity ADD CONSTRAINT `PRIMARY_KEY` PRIMARY KEY (entity_id);
+ALTER TABLE catalog_product_entity DROP COLUMN row_id;
 
 DROP TABLE IF EXISTS `sequence_product_bundle_selection`,`sequence_product_bundle_option`,`sequence_product`;
 
@@ -281,12 +285,13 @@ ADD UNIQUE KEY `CATALOG_CATEGORY_ENTITY_VARCHAR_ENTITY_ID_ATTRIBUTE_ID_STORE_ID`
 DROP FOREIGN KEY `CAT_CTGR_ENTT_VCHR_ROW_ID_CAT_CTGR_ENTT_ROW_ID`,
 ADD CONSTRAINT `CAT_CTGR_ENTT_VCHR_ROW_ID_CAT_CTGR_ENTT_ID` FOREIGN KEY (`entity_id`) REFERENCES `catalog_category_entity` (`entity_id`) ON DELETE CASCADE;
 
-ALTER TABLE wfh_downgrade.catalog_category_entity DROP FOREIGN KEY CAT_CTGR_ENTT_ENTT_ID_SEQUENCE_CAT_CTGR_SEQUENCE_VAL;
-ALTER TABLE wfh_downgrade.catalog_category_entity MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
-ALTER TABLE wfh_downgrade.catalog_category_entity MODIFY COLUMN entity_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
-ALTER TABLE wfh_downgrade.catalog_category_entity DROP PRIMARY KEY;
-ALTER TABLE wfh_downgrade.catalog_category_entity ADD CONSTRAINT `PRIMARY` PRIMARY KEY (entity_id);
-ALTER TABLE wfh_downgrade.catalog_category_entity DROP COLUMN row_id;
+UPDATE catalog_category_entity set entity_id = row_id ;
+ALTER TABLE catalog_category_entity DROP FOREIGN KEY CAT_CTGR_ENTT_ENTT_ID_SEQUENCE_CAT_CTGR_SEQUENCE_VAL;
+ALTER TABLE catalog_category_entity MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
+ALTER TABLE catalog_category_entity MODIFY COLUMN entity_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
+ALTER TABLE catalog_category_entity DROP PRIMARY KEY;
+ALTER TABLE catalog_category_entity ADD CONSTRAINT `PRIMARY_KEY` PRIMARY KEY (entity_id);
+ALTER TABLE catalog_category_entity DROP COLUMN row_id;
 
 -- SALES RULE
 
@@ -316,13 +321,13 @@ ADD CONSTRAINT `SALESRULE_WEBSITE_RULE_ID_SALESRULE_RULE_ID` FOREIGN KEY (`rule_
 		ALTER TABLE `amasty_banners_lite_rule` DROP FOREIGN KEY `AMASTY_BANNERS_LITE_RULE_SALESRULE_ID_SALESRULE_RULE_ID`;
 		ALTER TABLE `amasty_banners_lite_rule` ADD CONSTRAINT `AMASTY_BANNERS_LITE_RULE_SALESRULE_ID_SALESRULE_RULE_ID` FOREIGN KEY (`salesrule_id`) REFERENCES `salesrule` (`rule_id`) ON DELETE CASCADE;
 
-
-ALTER TABLE wfh_downgrade.salesrule DROP FOREIGN KEY SALESRULE_RULE_ID_SEQUENCE_SALESRULE_SEQUENCE_VALUE;
-ALTER TABLE wfh_downgrade.salesrule MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
-ALTER TABLE wfh_downgrade.salesrule MODIFY COLUMN rule_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
-ALTER TABLE wfh_downgrade.salesrule DROP PRIMARY KEY;
-ALTER TABLE wfh_downgrade.salesrule ADD CONSTRAINT `PRIMARY` PRIMARY KEY (rule_id);
-ALTER TABLE wfh_downgrade.salesrule DROP COLUMN row_id;
+UPDATE salesrule SET rule_id = row_id;
+ALTER TABLE salesrule DROP FOREIGN KEY SALESRULE_RULE_ID_SEQUENCE_SALESRULE_SEQUENCE_VALUE;
+ALTER TABLE salesrule MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
+ALTER TABLE salesrule MODIFY COLUMN rule_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
+ALTER TABLE salesrule DROP PRIMARY KEY;
+ALTER TABLE salesrule ADD CONSTRAINT `PRIMARY_KEY` PRIMARY KEY (rule_id);
+ALTER TABLE salesrule DROP COLUMN row_id;
 
 
 -- CATALOG RULE
@@ -337,12 +342,13 @@ CHANGE `row_id` `rule_id` int(10) unsigned NOT NULL COMMENT 'Rule Id',
 DROP FOREIGN KEY `CATALOGRULE_WEBSITE_ROW_ID_CATALOGRULE_ROW_ID`,
 ADD CONSTRAINT `CATALOGRULE_WEBSITE_RULE_ID_CATALOGRULE_RULE_ID` FOREIGN KEY (`rule_id`) REFERENCES `catalogrule` (`rule_id`) ON DELETE CASCADE;
 
-ALTER TABLE wfh_downgrade.catalogrule DROP FOREIGN KEY CATALOGRULE_RULE_ID_SEQUENCE_CATALOGRULE_SEQUENCE_VALUE;
-ALTER TABLE wfh_downgrade.catalogrule MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
-ALTER TABLE wfh_downgrade.catalogrule MODIFY COLUMN rule_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
-ALTER TABLE wfh_downgrade.catalogrule DROP PRIMARY KEY;
-ALTER TABLE wfh_downgrade.catalogrule ADD CONSTRAINT `PRIMARY` PRIMARY KEY (rule_id);
-ALTER TABLE wfh_downgrade.catalogrule DROP COLUMN row_id;
+UPDATE catalogrule SET rule_id = row_id;
+ALTER TABLE catalogrule DROP FOREIGN KEY CATALOGRULE_RULE_ID_SEQUENCE_CATALOGRULE_SEQUENCE_VALUE;
+ALTER TABLE catalogrule MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
+ALTER TABLE catalogrule MODIFY COLUMN rule_id int unsigned auto_increment NOT NULL COMMENT 'Entity Id';
+ALTER TABLE catalogrule DROP PRIMARY KEY;
+ALTER TABLE catalogrule ADD CONSTRAINT `PRIMARY_KEY` PRIMARY KEY (rule_id);
+ALTER TABLE catalogrule DROP COLUMN row_id;
 
 
 ALTER TABLE catalog_category_product DROP FOREIGN KEY `CAT_CTGR_PRD_PRD_ID_SEQUENCE_PRD_SEQUENCE_VAL`;
@@ -411,14 +417,12 @@ WHERE `attribute_code` IN (
                            'reason',
                            'reason_other',
                            'resolution',
-                           'rma_entity_id',
+                           'rma_entity_id'
                            
     );
    
-alter table wishlist rename index WISHLIST_CUSTOMER_ID to WISHLIST_CUSTOMER_ID_DELETE_ME;
+alter table `wishlist` rename index WISHLIST_CUSTOMER_ID to WISHLIST_CUSTOMER_ID_DELETE_ME;
 
-
-DELETE from core_config_data ccd where path like '%carriers/loyalty%';
 
 DELETE FROM `eav_attribute` WHERE `attribute_code` IN (
    'sale_id',
