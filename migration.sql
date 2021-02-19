@@ -100,7 +100,6 @@ ADD PRIMARY KEY (`block_id`,`store_id`),
 DROP FOREIGN KEY `CMS_BLOCK_STORE_ROW_ID_CMS_BLOCK_ROW_ID`,
 ADD CONSTRAINT `CMS_BLOCK_STORE_BLOCK_ID_CMS_BLOCK_BLOCK_ID` FOREIGN KEY (`block_id`) REFERENCES `cms_block` (`block_id`) ON DELETE CASCADE;
 
-UPDATE cms_block set block_id = row_id ;
 ALTER TABLE cms_block DROP FOREIGN KEY CMS_BLOCK_BLOCK_ID_SEQUENCE_CMS_BLOCK_SEQUENCE_VALUE;
 ALTER TABLE cms_block MODIFY COLUMN row_id smallint COMMENT 'Version Id';
 ALTER TABLE cms_block MODIFY COLUMN block_id smallint auto_increment NOT NULL COMMENT 'Entity Id';
@@ -115,7 +114,7 @@ ADD PRIMARY KEY (`page_id`,`store_id`),
 DROP FOREIGN KEY `CMS_PAGE_STORE_ROW_ID_CMS_PAGE_ROW_ID`,
 ADD CONSTRAINT `CMS_PAGE_STORE_PAGE_ID_CMS_PAGE_PAGE_ID` FOREIGN KEY (`page_id`) REFERENCES `cms_page` (`page_id`) ON DELETE CASCADE;
 
-UPDATE cms_page set block_id = row_id ;
+UPDATE cms_page set page_id = row_id ;
 ALTER TABLE cms_page DROP FOREIGN KEY CMS_PAGE_PAGE_ID_SEQUENCE_CMS_PAGE_SEQUENCE_VALUE;
 ALTER TABLE cms_page MODIFY COLUMN row_id smallint NOT NULL COMMENT 'Version Id';
 ALTER TABLE cms_page MODIFY COLUMN page_id smallint auto_increment NOT NULL COMMENT 'Entity Id';
@@ -237,6 +236,11 @@ ADD CONSTRAINT `DOWNLOADABLE_LINK_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID` F
 ALTER TABLE `downloadable_sample`
 DROP FOREIGN KEY `DOWNLOADABLE_SAMPLE_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ROW_ID`,
 ADD CONSTRAINT `DOWNLOADABLE_SAMPLE_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID` FOREIGN KEY (`product_id`) REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE;
+
+
+UPDATE catalog_product_website cpw
+inner join catalog_product_entity cpe on cpe.entity_id = cpw.product_id
+set cpw.product_id  = cpe.row_id ;
 
 UPDATE catalog_product_entity set entity_id = row_id ;
 ALTER TABLE catalog_product_entity DROP FOREIGN KEY CATALOG_PRODUCT_ENTITY_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE;
@@ -428,3 +432,6 @@ DELETE FROM `eav_attribute` WHERE `attribute_code` IN (
    'sale_id',
    'cogs_id',
    'tracking_category');
+
+ 
+ 
