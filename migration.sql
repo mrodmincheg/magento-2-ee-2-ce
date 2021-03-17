@@ -180,8 +180,8 @@ ALTER TABLE `catalog_product_entity_gallery`
 CHANGE `row_id` `entity_id` int(10) unsigned NOT NULL COMMENT 'Entity Id',
 DROP FOREIGN KEY `CAT_PRD_ENTT_GLR_ROW_ID_CAT_PRD_ENTT_ROW_ID`,
 ADD CONSTRAINT `CAT_PRD_ENTT_GLR_ENTT_ID_CAT_PRD_ENTT_ENTT_ID` FOREIGN KEY (`entity_id`) REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE;
-ALTER TABLE wfh_downgrade.catalog_product_entity_gallery RENAME INDEX CATALOG_PRODUCT_ENTITY_GALLERY_ROW_ID TO CATALOG_PRODUCT_ENTITY_GALLERY_ENTITY_ID;
-ALTER TABLE wfh_downgrade.catalog_product_entity_gallery RENAME INDEX CATALOG_PRODUCT_ENTITY_GALLERY_ROW_ID_ATTRIBUTE_ID_STORE_ID TO CATALOG_PRODUCT_ENTITY_GALLERY_ENTITY_ID_ATTRIBUTE_ID_STORE_ID;
+ALTER TABLE catalog_product_entity_gallery RENAME INDEX CATALOG_PRODUCT_ENTITY_GALLERY_ROW_ID TO CATALOG_PRODUCT_ENTITY_GALLERY_ENTITY_ID;
+ALTER TABLE catalog_product_entity_gallery RENAME INDEX CATALOG_PRODUCT_ENTITY_GALLERY_ROW_ID_ATTRIBUTE_ID_STORE_ID TO CATALOG_PRODUCT_ENTITY_GALLERY_ENTITY_ID_ATTRIBUTE_ID_STORE_ID;
 
 
 ALTER TABLE `catalog_product_entity_media_gallery_value`
@@ -428,10 +428,27 @@ WHERE `attribute_code` IN (
 alter table `wishlist` rename index WISHLIST_CUSTOMER_ID to WISHLIST_CUSTOMER_ID_DELETE_ME;
 
 
+
+ALTER TABLE `wishlist` ADD CONSTRAINT `WISHLIST_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID` FOREIGN KEY (`customer_id`) REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE;
+
+
+DELETE  from wishlist where wishlist_id = 1710;
+DELETE  from wishlist where wishlist_id = 4385;
+
+SELECT * from wishlist w where customer_id = 56873;
+
+
 DELETE FROM `eav_attribute` WHERE `attribute_code` IN (
    'sale_id',
    'cogs_id',
    'tracking_category');
-
+  
+  
+SELECT 
+  TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
+FROM
+  INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+  REFERENCED_TABLE_NAME = 'wishlist' ;
  
  
