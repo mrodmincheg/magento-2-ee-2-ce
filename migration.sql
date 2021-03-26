@@ -92,6 +92,7 @@ DROP TABLE IF EXISTS
     `visual_merchandiser_rule`;
 
 -- CMS
+delete from cms_block where row_id in (12,289)
 
 ALTER TABLE `cms_block_store`
 CHANGE `row_id` `block_id` smallint(6) NOT NULL COMMENT 'Block ID',
@@ -100,6 +101,7 @@ ADD PRIMARY KEY (`block_id`,`store_id`),
 DROP FOREIGN KEY `CMS_BLOCK_STORE_ROW_ID_CMS_BLOCK_ROW_ID`,
 ADD CONSTRAINT `CMS_BLOCK_STORE_BLOCK_ID_CMS_BLOCK_BLOCK_ID` FOREIGN KEY (`block_id`) REFERENCES `cms_block` (`block_id`) ON DELETE CASCADE;
 
+UPDATE cms_block SET block_id = row_id;
 ALTER TABLE cms_block DROP FOREIGN KEY CMS_BLOCK_BLOCK_ID_SEQUENCE_CMS_BLOCK_SEQUENCE_VALUE;
 ALTER TABLE cms_block MODIFY COLUMN row_id smallint COMMENT 'Version Id';
 ALTER TABLE cms_block MODIFY COLUMN block_id smallint auto_increment NOT NULL COMMENT 'Entity Id';
@@ -174,7 +176,6 @@ DROP KEY `CAT_PRD_BNDL_SELECTION_PRICE_PARENT_PRD_ID_CAT_PRD_ENTT_ROW_ID`,
 DROP FOREIGN KEY `FK_AE9FDBF7988FB6BE3E04D91DA2CFB273`,
 DROP FOREIGN KEY `CAT_PRD_BNDL_SELECTION_PRICE_PARENT_PRD_ID_CAT_PRD_ENTT_ROW_ID`,
 ADD CONSTRAINT `FK_DCF37523AA05D770A70AA4ED7C2616E4` FOREIGN KEY (`selection_id`) REFERENCES `catalog_product_bundle_selection` (`selection_id`) ON DELETE CASCADE;
-ADD CONSTRAINT `CAT_PRD_BNDL_SELECTION_PRICE_WS_ID_STORE_WS_WS_ID` FOREIGN KEY (`website_id`) REFERENCES `store_website` (`website_id`) ON DELETE CASCADE;
 
 ALTER TABLE `catalog_product_entity_gallery`
 CHANGE `row_id` `entity_id` int(10) unsigned NOT NULL COMMENT 'Entity Id',
@@ -241,6 +242,10 @@ ADD CONSTRAINT `DOWNLOADABLE_SAMPLE_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID`
 UPDATE catalog_product_website cpw
 inner join catalog_product_entity cpe on cpe.entity_id = cpw.product_id
 set cpw.product_id  = cpe.row_id ;
+
+UPDATE catalog_category_product ccp
+inner join catalog_product_entity cpe on ccp.product_id = cpe.entity_id 
+set ccp.product_id  = cpe.row_id ;
 
 UPDATE catalog_product_entity set entity_id = row_id ;
 ALTER TABLE catalog_product_entity DROP FOREIGN KEY CATALOG_PRODUCT_ENTITY_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE;
@@ -428,19 +433,20 @@ WHERE `attribute_code` IN (
                            
     );
    
-alter table `wishlist` rename index WISHLIST_CUSTOMER_ID to WISHLIST_CUSTOMER_ID_DELETE_ME;
+-- alter table `wishlist` rename index WISHLIST_CUSTOMER_ID to WISHLIST_CUSTOMER_ID_DELETE_ME;
+
+ ALTER TABLE wishlist DROP INDEX WISHLIST_CUSTOMER_ID;
 
 
 
-ALTER TABLE `wishlist` ADD CONSTRAINT `WISHLIST_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID` FOREIGN KEY (`customer_id`) REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE;
+
+-- ALTER TABLE `wishlist` ADD CONSTRAINT `WISHLIST_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID` FOREIGN KEY (`customer_id`) REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE;
 
 
 DELETE  from wishlist where wishlist_id = 1710;
 DELETE  from wishlist where wishlist_id = 4385;
 
-SELECT * from wishlist w where customer_id = 56873;
-
-
+-- delete from core_config_data where config_id in (726,727,2847,2848,2862,2863)
 DELETE FROM `eav_attribute` WHERE `attribute_code` IN (
    'sale_id',
    'cogs_id',
