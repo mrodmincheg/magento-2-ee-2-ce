@@ -244,8 +244,20 @@ inner join catalog_product_entity cpe on cpe.entity_id = cpw.product_id
 set cpw.product_id  = cpe.row_id ;
 
 UPDATE catalog_category_product ccp
-inner join catalog_product_entity cpe on ccp.product_id = cpe.entity_id 
+inner join catalog_product_entity cpe on cpe.entity_id = ccp.product_id
 set ccp.product_id  = cpe.row_id ;
+
+UPDATE catalog_product_link cpl
+inner join catalog_product_entity cpe on cpe.entity_id = cpl.linked_product_id 
+set cpl.linked_product_id = cpe.row_id ;
+
+UPDATE catalog_product_relation cpr
+inner join catalog_product_entity cpe on cpe.entity_id = cpr.child_id 
+set cpr.child_id = cpe.row_id ;
+
+UPDATE catalog_product_super_link cpsl
+inner join catalog_product_entity cpe on cpe.entity_id = cpsl.product_id 
+set cpsl.product_id = cpe.row_id ;
 
 UPDATE catalog_product_entity set entity_id = row_id ;
 ALTER TABLE catalog_product_entity DROP FOREIGN KEY CATALOG_PRODUCT_ENTITY_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE;
