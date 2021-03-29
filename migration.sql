@@ -263,9 +263,11 @@ UPDATE cataloginventory_stock_item csi
 inner join catalog_product_entity cpe on cpe.entity_id = csi.product_id 
 set csi.product_id = cpe.row_id ;
 
-delete from url_rewrite where entity_id in (
-	select DISTINCT entity_id from catalog_product_entity cpe where entity_id != row_id
-);
+UPDATE url_rewrite ur
+inner join catalog_product_entity cpe on cpe.entity_id = ur.entity_id 
+set ur.entity_id = cpe.row_id, ur.target_path = REPLACE(ur.target_path, cpe.entity_id, cpe.row_id)
+where ur.entity_id in (select DISTINCT entity_id from catalog_product_entity cpe where entity_id != row_id)
+and ur.entity_type = 'product';
 
 UPDATE catalog_product_entity set entity_id = row_id ;
 ALTER TABLE catalog_product_entity DROP FOREIGN KEY CATALOG_PRODUCT_ENTITY_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE;
