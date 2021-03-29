@@ -259,6 +259,14 @@ UPDATE catalog_product_super_link cpsl
 inner join catalog_product_entity cpe on cpe.entity_id = cpsl.product_id 
 set cpsl.product_id = cpe.row_id ;
 
+UPDATE cataloginventory_stock_item csi
+inner join catalog_product_entity cpe on cpe.entity_id = csi.product_id 
+set csi.product_id = cpe.row_id ;
+
+delete from url_rewrite where entity_id in (
+	select DISTINCT entity_id from catalog_product_entity cpe where entity_id != row_id
+);
+
 UPDATE catalog_product_entity set entity_id = row_id ;
 ALTER TABLE catalog_product_entity DROP FOREIGN KEY CATALOG_PRODUCT_ENTITY_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE;
 ALTER TABLE catalog_product_entity MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
