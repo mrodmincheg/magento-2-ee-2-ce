@@ -92,7 +92,6 @@ DROP TABLE IF EXISTS
     `visual_merchandiser_rule`;
 
 -- CMS
-delete from cms_block where row_id in (12,289)
 
 ALTER TABLE `cms_block_store`
 CHANGE `row_id` `block_id` smallint(6) NOT NULL COMMENT 'Block ID',
@@ -454,27 +453,20 @@ WHERE `attribute_code` IN (
                            'rma_entity_id'
                            
     );
-   
--- alter table `wishlist` rename index WISHLIST_CUSTOMER_ID to WISHLIST_CUSTOMER_ID_DELETE_ME;
+ 
+-- Rename or drop WISHLIST_CUSTOMER_ID depnds on DB version (old versions of MariaDB and MySql dont support rename indexes)
 
+-- alter table `wishlist` rename index WISHLIST_CUSTOMER_ID to WISHLIST_CUSTOMER_ID_DELETE_ME;
  ALTER TABLE wishlist DROP INDEX WISHLIST_CUSTOMER_ID;
 
 
-
-
--- ALTER TABLE `wishlist` ADD CONSTRAINT `WISHLIST_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID` FOREIGN KEY (`customer_id`) REFERENCES `catalog_product_entity` (`entity_id`) ON DELETE CASCADE;
-
-
-DELETE  from wishlist where wishlist_id = 1710;
-DELETE  from wishlist where wishlist_id = 4385;
-
--- delete from core_config_data where config_id in (726,727,2847,2848,2862,2863)
 DELETE FROM `eav_attribute` WHERE `attribute_code` IN (
    'sale_id',
    'cogs_id',
    'tracking_category');
   
   
+-- check foreign keys in a specific DB
 SELECT 
   TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
 FROM
