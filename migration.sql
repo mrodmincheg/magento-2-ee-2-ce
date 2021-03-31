@@ -268,6 +268,14 @@ set ur.entity_id = cpe.row_id, ur.target_path = REPLACE(ur.target_path, cpe.enti
 where ur.entity_id in (select DISTINCT entity_id from catalog_product_entity cpe where entity_id != row_id)
 and ur.entity_type = 'product';
 
+update quote_item qi 
+inner join catalog_product_entity cpe on cpe.entity_id  = qi.product_id
+set qi.product_id = cpe.row_id; 
+
+update sales_order_item soi  
+inner join catalog_product_entity cpe on cpe.entity_id  = soi.product_id
+set soi.product_id = cpe.row_id; 
+
 UPDATE catalog_product_entity set entity_id = row_id ;
 ALTER TABLE catalog_product_entity DROP FOREIGN KEY CATALOG_PRODUCT_ENTITY_ENTITY_ID_SEQUENCE_PRODUCT_SEQUENCE_VALUE;
 ALTER TABLE catalog_product_entity MODIFY COLUMN row_id int unsigned NOT NULL COMMENT 'Version Id';
